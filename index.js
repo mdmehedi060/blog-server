@@ -51,6 +51,32 @@ app.get('/blog/:id', async (req,res)=>{
   res.send(result);
 })
 
+
+// update blog api
+
+app.put('/blog/:id', async (req,res)=>{
+  const id =req.params.id;
+  const filter = {_id : new ObjectId(id)};
+  const options= {upsert: true};
+  const updateBlog=req.body;
+  const blog ={
+    $set: {
+      title: updatedCoffee.title, 
+      category: updatedCoffee.category,    
+      shortdiscription: updatedCoffee.shortdiscription, 
+      longdiscription: updatedCoffee.longdiscription, 
+      photo:updatedCoffee.photo,
+    }
+  }
+ const result =await blogCollection.updateOne(filter,blog,options);
+ res.send(result);
+})
+
+
+
+
+
+
 // add blog api
 
 app.get('/blogadd', async (req, res)=>{
@@ -67,38 +93,6 @@ app.post('/blogadd', async(req,res)=>{
   res.send(result);
 })
 
-
-// update blog api
-
-app.get('/blogadd/:id', async (req,res)=>{
-  const id =req.params.id;
-  const quary = {_id : new ObjectId(id)};
-  const result = await blogAddCollection.findOne(quary);
-  res.send(result);
-})
-
-
-
-// app.put('/coffee/:id', async (req,res)=>{
-//   const id =req.params.id;
-//   const filter = {_id : new ObjectId(id)};
-//   const options= {upsert: true};
-//   const updatedCoffee=req.body;
-//   const coffee ={
-//     $set: {
-//       name: updatedCoffee.name, 
-//       quantity: updatedCoffee.quantity, 
-//       supplier: updatedCoffee.supplier, 
-//       test: updatedCoffee.test, 
-//       category: updatedCoffee.category, 
-//       details: updatedCoffee. details, 
-//       photo:updatedCoffee.photo,
-//     }
-//   }
-//  const result =await coffeeCollection.updateOne(filter,coffee,options);
-//  res.send(result);
-// })
-
 // wishlist api
 
 app.get('/wishlist', async (req, res)=>{
@@ -108,15 +102,23 @@ app.get('/wishlist', async (req, res)=>{
 })
 
 
-
 app.post("/wishlist", async (req, res) => {
   const blogs = req.body;
   const result = await wishlistCollection.insertOne(blogs);
-  console.log(result);
+  // console.log(result);
   res.send(result);
 });
 
 
+
+// delete wishlist
+
+app.delete('/wishlist/:id', async (req,res)=>{
+  const id =req.params.id;
+  const quary = {_id : new ObjectId(id)};
+  const result = await wishlistCollection.deleteOne(quary);
+  res.send(result);
+})
 
 
     // Send a ping to confirm a successful connection
