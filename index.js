@@ -5,6 +5,8 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
+
+// middle ware
 app.use(cors());
 app.use(express.json());
 
@@ -28,7 +30,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const blogCollection = client.db('blogDB').collection('blog');
     const blogAddCollection = client.db('blogAddDB').collection('blogAdd');
@@ -61,11 +63,11 @@ app.put('/blog/:id', async (req,res)=>{
   const updateBlog=req.body;
   const blog ={
     $set: {
-      title: updatedCoffee.title, 
-      category: updatedCoffee.category,    
-      shortdiscription: updatedCoffee.shortdiscription, 
-      longdiscription: updatedCoffee.longdiscription, 
-      photo:updatedCoffee.photo,
+      title: updateBlog.title, 
+      category: updateBlog.category,    
+      shortdiscription: updateBlog.shortdiscription, 
+      longdiscription: updateBlog.longdiscription, 
+      photo:updateBlog.photo,
     }
   }
  const result =await blogCollection.updateOne(filter,blog,options);
@@ -104,12 +106,30 @@ app.get('/wishlist', async (req, res)=>{
 
 app.post("/wishlist", async (req, res) => {
   const blogs = req.body;
+  const filter = { email: blogs?.email }
+  const updateDoc= {
+    $set: {
+      lastLoggedAt: blogs.lastLoggedAt
+    }
+  }
+  
   const result = await wishlistCollection.insertOne(blogs);
   // console.log(result);
+
   res.send(result);
 });
 
-
+// app.push('/wishlist', async(req,res)=>{
+//   const user =req.body;
+//   const filter = { email: user.email }
+//   const updateDoc= {
+//     $set: {
+//       lastLoggedAt: user.lastLoggedAt
+//     }
+//   }
+//   const result =await wishlistCollection.updateOne(filter, updateDoc);
+//   res.send(result);
+// })
 
 // delete wishlist
 
@@ -122,7 +142,7 @@ app.delete('/wishlist/:id', async (req,res)=>{
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
